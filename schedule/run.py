@@ -49,6 +49,7 @@ POLL_SEC, POLL_MAX_SEC = 60, 300                    # 컨테이너 상태: 문�
 MAX_ATTEMPTS = 3                                    # 이만큼 보내도 안 올라가면 failed (PC 가 받아 예약 해제)
 STUCK_ALERT_H = 2                                   # sending 을 이만큼 확인 못 하면 실패 메일(종료 코드 1)
 AUTH_CODES = {"190", "102", "10"}                   # 토큰 만료·무효·권한
+AUTH_ALERT_HOUR = 11                                # 토큰 오류 실패 메일은 한국 시간 이 시각대 실행에서만 (15분마다 오지 않게)
 TRANSIENT_CODES = {"1", "2", "4", "17", "32", "613"}  # 일시 오류·한도: 실패로 적지 않고 다음 실행에서 다시
 DEFAULT_CONFIG = {"windows": ["11:00-13:00", "15:00-18:00", "19:00-22:00"], "min_gap_min": 120}
 
@@ -347,9 +348,11 @@ def settle(g: Graph, repo: Repo, ig_id: str, states: dict[str, dict], now: datet
         else:
             clear = False
             log(f"{qid}: 게시 여부를 아직 모름 ({info.get('reason') or '보낸 지 얼마 안 됨'}) — 다음 실행에서 다시 확인")
-            if now - (ts(st.get("sent_at")) or now) > timedelta(hours=STUCK_ALERT_H):
+            if now - (ts(st.get("sent_at")) or now) > timedelta(hours=STUCK_ALERT_H) and not st.get("alerted_at"):
                 alerts.append(f"{qid}: 보낸 지 {STUCK_ALERT_H}시간이 넘도록 게시 여부를 확인하지 못함 — 인스타그램에서 직접 "
                               "확인하세요 (그동안 새 예약 게시는 멈춤)")
+                st["alerted_at"] = iso(now)                   # 실패 메일은 한 번만
+                repo.save_state(qid, st, f"alerted {qid}")
     return clear, alerts
 
 
@@ -432,7 +435,8 @@ def run(now: datetime, g: Graph, repo: Repo, ig_id: str, repo_name: str, *, dry_
     items, _ = g.recent(ig_id)
     times = [t for t in (ts(m.get("timestamp")) for m in items) if t]
     today = sum(1 for t in times if t.astimezone(KST).date() == now.date())
-    sent = [t for t in (ts(s.get("sent_at")) for s in states.values()) if t]     # 안 올라간 시도도 간격에 넣음
+    sent = [t for t in (ts(s.get("sent_at")) for s in states.values()                # 안 올라간 시도도 간격에 넣음
+                        if s.get("status") in ("sending", "not_published", "published", "failed")) if t]
     last = max(times + sent) if times or sent else None
     waiting = sorted((qid for qid, q in queue.items()
                       if (states.get(qid) or {}).get("status") in (None, "not_published")),
@@ -451,11 +455,12 @@ def run(now: datetime, g: Graph, repo: Repo, ig_id: str, repo_name: str, *, dry_
     q = queue[qid]
     fp = caption_fp(str(q.get("caption") or ""))
     dup = next((m for m in items if caption_fp(str(m.get("caption") or "")) == fp), None)
-    same = next((s for k, s in states.items() if k != qid and s.get("item_id") == q.get("item_id")
-                 and s.get("status") == "published"), None)
+    live = {str(m.get("id")): m for m in items}      # 지금 인스타그램에 있는 것만 (앱에서 지운 옛 게시물은 아님)
+    same = next((live[str(s.get("media_id"))] for k, s in states.items()
+                 if k != qid and q.get("item_id") and s.get("item_id") == q.get("item_id")
+                 and s.get("status") == "published" and str(s.get("media_id")) in live), None)
     if dup or same:                                  # 이미 올라가 있는 게시물: 다시 올리지 않고 그 게시물로 기록
-        media = dup or {"id": same.get("media_id"), "permalink": same.get("permalink"),
-                        "timestamp": same.get("published_at")}
+        media = dup or same
         log(f"{qid}: 이미 인스타그램에 있는 게시물 {media.get('permalink') or media.get('id')} — 다시 올리지 않음")
         if not dry_run:
             st = {"qid": qid, "date": q.get("date"), "slug": q.get("slug"), "item_id": q.get("item_id")}
@@ -501,7 +506,7 @@ def main(argv: list[str] | None = None) -> int:
         if str(e.code) in AUTH_CODES or e.status == 401:
             log(f"[확인 필요] 인스타그램 토큰 문제로 예약 게시가 멈췄습니다 — PC 에서 cardnews token status 로 확인하고 "
                 f"검수 화면을 열어 비밀값을 다시 넣으세요: {e}")
-            return 1
+            return 1 if datetime.now(KST).hour == AUTH_ALERT_HOUR else 0      # 실패 메일은 하루 한 시간대만
         log(f"인스타그램 API 오류로 이번 실행은 멈춤 — 다음 실행에서 다시: {e}")
         return 0
     for m in out.get("alerts") or []:
