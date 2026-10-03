@@ -48,8 +48,7 @@ CONTAINER_TTL_H = 24                                # 컨테이너는 만든 지
 POLL_SEC, POLL_MAX_SEC = 60, 300                    # 컨테이너 상태: 문서 권장 1분에 한 번, 5분 이내
 MAX_ATTEMPTS = 3                                    # 이만큼 보내도 안 올라가면 failed (PC 가 받아 예약 해제)
 STUCK_ALERT_H = 2                                   # sending 을 이만큼 확인 못 하면 실패 메일(종료 코드 1)
-AUTH_CODES = {"190", "102", "10"}                   # 토큰 만료·무효·권한
-AUTH_ALERT_HOUR = 11                                # 토큰 오류 실패 메일은 한국 시간 이 시각대 실행에서만 (15분마다 오지 않게)
+AUTH_CODES = {"190", "102", "10", "200"}            # 토큰 만료·무효·권한 — 게시물 탓이 아니라 실행 전체를 멈춤
 TRANSIENT_CODES = {"1", "2", "4", "17", "32", "613"}  # 일시 오류·한도: 실패로 적지 않고 다음 실행에서 다시
 DEFAULT_CONFIG = {"windows": ["11:00-13:00", "15:00-18:00", "19:00-22:00"], "min_gap_min": 120}
 
@@ -386,6 +385,8 @@ def publish_one(g: Graph, repo: Repo, ig_id: str, qid: str, q: dict, prev: dict 
             cid = g.create_carousel(ig_id, [g.create_item(ig_id, u) for u in urls], caption)
         g.wait_ready(cid)
     except IGError as e:
+        if str(e.code) in AUTH_CODES or e.status == 401:
+            raise                                       # 토큰·권한 문제: 이 게시물을 실패로 적지 않고 실행을 멈춤
         if e.rejected and str(e.code) not in TRANSIENT_CODES:
             st = base | {"status": "failed", "error": str(e), "failed_at": iso(now)}
             repo.save_state(qid, st, f"failed {qid}")
@@ -485,6 +486,15 @@ def _load_json(p: Path) -> dict:
     return v if isinstance(v, dict) else {}
 
 
+def alert_hour(root: Path) -> int:
+    """토큰 오류 실패 메일을 보낼 시각대(한국 시간) = 첫 시간대가 시작하는 시 (워크플로가 그때부터 돎, 15분마다 오지 않게)."""
+    cfg = DEFAULT_CONFIG | _load_json(root / "schedule" / "config.json")
+    try:
+        return parse_windows(cfg.get("windows") or DEFAULT_CONFIG["windows"])[0][0] // 60
+    except (ValueError, IndexError):
+        return parse_windows(DEFAULT_CONFIG["windows"])[0][0] // 60
+
+
 def main(argv: list[str] | None = None) -> int:
     """종료 코드 1 = 사람이 봐야 함 (GitHub 가 실패 메일을 보냄): 토큰 문제, 예약 게시 실패, 오래 확인 못 한 게시 요청."""
     ap = argparse.ArgumentParser(description="POP&EAT 예약 게시 (GitHub Actions)")
@@ -506,7 +516,7 @@ def main(argv: list[str] | None = None) -> int:
         if str(e.code) in AUTH_CODES or e.status == 401:
             log(f"[확인 필요] 인스타그램 토큰 문제로 예약 게시가 멈췄습니다 — PC 에서 cardnews token status 로 확인하고 "
                 f"검수 화면을 열어 비밀값을 다시 넣으세요: {e}")
-            return 1 if datetime.now(KST).hour == AUTH_ALERT_HOUR else 0      # 실패 메일은 하루 한 시간대만
+            return 1 if datetime.now(KST).hour == alert_hour(repo.root) else 0   # 실패 메일은 하루 한 시간대만
         log(f"인스타그램 API 오류로 이번 실행은 멈춤 — 다음 실행에서 다시: {e}")
         return 0
     for m in out.get("alerts") or []:
