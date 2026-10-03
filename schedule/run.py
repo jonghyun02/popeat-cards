@@ -13,7 +13,9 @@
   푸시한 뒤 대기열 파일이 그새 지워졌으면(PC 에서 예약 취소) 보내지 않고 canceled 로 적는다.
 - sending 이 남아 있으면 새로 올리지 않고 먼저 확인한다: 컨테이너 상태 PUBLISHED 또는 최근 게시물에 같은 캡션 → published.
   둘 다 확인됐는데 없고 보낸 지 10분이 지났으면 not_published (다시 올릴 수 있음). 확인이 안 되면 그대로 두고 다음 실행에서 다시.
-- 403 code 4(요청 한도·스팸 의심 2207051) 거절은 실제로 올라간 적이 있어(2026-10-04) 실패로 치지 않고 위 확인을 거친다.
+- media_publish 오류는 어떤 것이든 실패로 확정하지 않고 위 확인을 거친다 (403 code 4·스팸 의심 2207051 거절로 왔는데
+  실제로 올라간 적이 있음, 2026-10-04). MAX_ATTEMPTS 번 보내도 안 올라갔으면 failed.
+- 보내기 전에 같은 캡션이 이미 인스타그램에 있거나 같은 게시물(item_id)이 다른 예약으로 올라갔으면 다시 올리지 않는다.
 - 워크플로 concurrency 로 한 번에 하나만 돈다.
 
 토큰은 환경변수(IG_ACCESS_TOKEN, GitHub 비밀값)에서만 읽고 Authorization 헤더로만 보낸다. 출력에는 나오지 않게 가린다.
@@ -44,7 +46,9 @@ CLOCK_SKEW_MIN = 10
 MEDIA_LOOKUP = 25
 CONTAINER_TTL_H = 24                                # 컨테이너는 만든 지 24시간이 지나면 만료
 POLL_SEC, POLL_MAX_SEC = 60, 300                    # 컨테이너 상태: 문서 권장 1분에 한 번, 5분 이내
-MAYBE_POSTED_CODES = {"4"}                          # 거절로 와도 올라갔을 수 있음
+MAX_ATTEMPTS = 3                                    # 이만큼 보내도 안 올라가면 failed (PC 가 받아 예약 해제)
+STUCK_ALERT_H = 2                                   # sending 을 이만큼 확인 못 하면 실패 메일(종료 코드 1)
+AUTH_CODES = {"190", "102", "10"}                   # 토큰 만료·무효·권한
 TRANSIENT_CODES = {"1", "2", "4", "17", "32", "613"}  # 일시 오류·한도: 실패로 적지 않고 다음 실행에서 다시
 DEFAULT_CONFIG = {"windows": ["11:00-13:00", "15:00-18:00", "19:00-22:00"], "min_gap_min": 120}
 
@@ -248,8 +252,8 @@ def reconcile(g: Graph, ig_id: str, st: dict, now: datetime) -> tuple[str, dict]
 class Repo:
     """체크아웃한 popeat-cards 저장소. 커밋·푸시는 state 파일만 (PC 쪽은 사진·queue 만 커밋하므로 겹치지 않음)."""
 
-    def __init__(self, root: Path, run=subprocess.run):
-        self.root, self._run = root, run
+    def __init__(self, root: Path, run=subprocess.run, branch: str = "main"):
+        self.root, self._run, self.branch = root, run, branch
 
     def git(self, *args: str) -> str:
         r = self._run(["git", *args], cwd=str(self.root), capture_output=True, text=True, encoding="utf-8",
@@ -276,12 +280,12 @@ class Repo:
         self.git("commit", "-q", "-m", message)
         for i in range(4):
             try:
-                self.git("push", "-q", "origin", "HEAD:main")
+                self.git("push", "-q", "origin", f"HEAD:{self.branch}")
                 return
             except RuntimeError:
                 if i == 3:
                     raise
-                self.git("pull", "-q", "--rebase", "origin", "main")
+                self.git("pull", "-q", "--rebase", "origin", self.branch)
 
 
 def _load_dir(d: Path) -> dict[str, dict]:
@@ -305,28 +309,37 @@ def raw_ok(url: str, http=urllib_http) -> bool:
     return status == 200 and ctype.split(";")[0].strip() == "image/jpeg"
 
 
+def _published(st: dict, media: dict, now: datetime, g: Graph, note: str) -> dict:
+    mid, link = str(media.get("id") or st.get("media_id") or ""), str(media.get("permalink") or st.get("permalink") or "")
+    if mid and not link:
+        try:
+            link = g.permalink(mid)
+        except IGError:
+            link = ""
+    st.update(status="published", media_id=mid or None, permalink=link or None,
+              published_at=iso(ts(media.get("timestamp")) or now), error=None, note=note)
+    return st
+
+
 # --------------------------------------------------------------------------- 한 번 실행
 
-def settle(g: Graph, repo: Repo, ig_id: str, states: dict[str, dict], now: datetime, log) -> bool:
-    """sending 으로 남은 것을 확인한다. 아직 모르는 것이 남으면 False (이번에는 새로 올리지 않음)."""
-    clear = True
+def settle(g: Graph, repo: Repo, ig_id: str, states: dict[str, dict], now: datetime, log) -> tuple[bool, list[str]]:
+    """sending 으로 남은 것을 확인한다. (새로 올려도 되는지, 사람이 봐야 할 경고들).
+    아직 모르는 것이 남으면 이번에는 새로 올리지 않는다. MAX_ATTEMPTS 번 보내도 안 올라갔으면 failed."""
+    clear, alerts = True, []
     for qid, st in states.items():
         if st.get("status") != "sending":
             continue
         state, info = reconcile(g, ig_id, st, now)
         if state == "published":
-            mid = str(info.get("id") or "")
-            link = str(info.get("permalink") or "")
-            if mid and not link:
-                try:
-                    link = g.permalink(mid)
-                except IGError:
-                    link = ""
-            st.update(status="published", media_id=mid or None, permalink=link or None,
-                      published_at=iso(ts(info.get("timestamp")) or ts(st.get("sent_at")) or now), error=None,
-                      note="보낸 뒤 확인해서 게시된 것을 찾음")
-            repo.save_state(qid, st, f"published {qid}")
-            log(f"{qid}: 지난 게시 요청이 올라간 것을 확인 {link}")
+            repo.save_state(qid, _published(st, info, ts(st.get("sent_at")) or now, g, "보낸 뒤 확인해서 게시된 것을 찾음"),
+                            f"published {qid}")
+            log(f"{qid}: 지난 게시 요청이 올라간 것을 확인 {st.get('permalink') or ''}")
+        elif state == "not_published" and int(st.get("attempt") or 1) >= MAX_ATTEMPTS:
+            st.update(status="failed", failed_at=iso(now),
+                      error=f"{MAX_ATTEMPTS}번 보냈지만 올라가지 않음 (마지막 응답: {st.get('note') or '없음'})")
+            repo.save_state(qid, st, f"failed {qid}")
+            alerts.append(f"{qid}: {st['error']}")
         elif state == "not_published":
             st.update(status="not_published", note="컨테이너·최근 게시물 모두 확인했고 없음 — 다시 올릴 수 있음")
             repo.save_state(qid, st, f"not published {qid}")
@@ -334,11 +347,14 @@ def settle(g: Graph, repo: Repo, ig_id: str, states: dict[str, dict], now: datet
         else:
             clear = False
             log(f"{qid}: 게시 여부를 아직 모름 ({info.get('reason') or '보낸 지 얼마 안 됨'}) — 다음 실행에서 다시 확인")
-    return clear
+            if now - (ts(st.get("sent_at")) or now) > timedelta(hours=STUCK_ALERT_H):
+                alerts.append(f"{qid}: 보낸 지 {STUCK_ALERT_H}시간이 넘도록 게시 여부를 확인하지 못함 — 인스타그램에서 직접 "
+                              "확인하세요 (그동안 새 예약 게시는 멈춤)")
+    return clear, alerts
 
 
 def publish_one(g: Graph, repo: Repo, ig_id: str, qid: str, q: dict, prev: dict | None, repo_name: str,
-                now: datetime, log, http=urllib_http) -> dict:
+                now: datetime, log, http=urllib_http, clock=lambda: datetime.now(KST)) -> dict:
     caption = str(q.get("caption") or "")
     images = [str(x) for x in q.get("images") or []]
     attempt = int((prev or {}).get("attempt") or 0) + 1
@@ -373,7 +389,7 @@ def publish_one(g: Graph, repo: Repo, ig_id: str, qid: str, q: dict, prev: dict 
             return st
         log(f"{qid}: 일시 오류로 이번에는 못 올림 — 다음 실행에서 다시 ({e})")
         return base | {"status": "skipped"}
-    st = base | {"status": "sending", "creation_id": cid, "caption_fp": caption_fp(caption), "sent_at": iso(now)}
+    st = base | {"status": "sending", "creation_id": cid, "caption_fp": caption_fp(caption), "sent_at": iso(clock())}
     repo.save_state(qid, st, f"sending {qid}")                  # 푸시가 안 되면 여기서 예외 → 보내지 않음
     if not (repo.root / "schedule" / "queue" / f"{qid}.json").is_file():   # 그새 PC 에서 예약 취소
         st.update(status="canceled", note="보내기 직전에 대기열에서 빠진 것을 확인 — 보내지 않음")
@@ -382,67 +398,78 @@ def publish_one(g: Graph, repo: Repo, ig_id: str, qid: str, q: dict, prev: dict 
     try:
         mid = g.publish(ig_id, cid)
     except IGError as e:
-        if e.rejected and str(e.code) not in MAYBE_POSTED_CODES:
-            st.update(status="failed", error=str(e), failed_at=iso(now))
-            repo.save_state(qid, st, f"failed {qid}")
-            return st
-        log(f"{qid}: 게시 결과를 알 수 없음 — 바로 확인 ({e})")
+        # 거절 응답이어도 올라간 적이 있다(code 4) — 어떤 오류든 실패로 확정하지 않고 확인을 거친다.
+        # 지금 못 찾으면 sending 으로 두고 다음 실행이 결론 낸다 (10분 뒤 안 올라갔으면 다시, MAX_ATTEMPTS 번이면 failed).
+        log(f"{qid}: 게시 응답이 오류 — 올라갔는지 확인 ({e})")
         st["note"] = f"게시 응답: {e}"
         state, info = reconcile(g, ig_id, st, now)            # 보낸 직후라 '안 올라감'으로는 결론 내지 않음
         if state != "published":
             repo.save_state(qid, st, f"sending {qid} (확인 대기)")
             return st
-        mid = str(info.get("id") or "")
-        st["permalink"] = info.get("permalink")
-    link = st.get("permalink") or ""
-    if mid and not link:
-        try:
-            link = g.permalink(mid)
-        except IGError:
-            link = ""
-    st.update(status="published", media_id=mid or None, permalink=link or None, published_at=iso(datetime.now(KST)),
-              error=None)
-    repo.save_state(qid, st, f"published {qid}")
+        repo.save_state(qid, _published(st, info, clock(), g, "게시 응답은 오류였지만 올라간 것을 확인"), f"published {qid}")
+        return st
+    repo.save_state(qid, _published(st, {"id": mid}, clock(), g, ""), f"published {qid}")
     return st
 
 
 def run(now: datetime, g: Graph, repo: Repo, ig_id: str, repo_name: str, *, dry_run: bool = False, log=print,
-        http=urllib_http) -> dict:
+        http=urllib_http, clock=lambda: datetime.now(KST)) -> dict:
     cfg = DEFAULT_CONFIG | _load_json(repo.root / "schedule" / "config.json")
     now = now.astimezone(KST)
     slots = plan_slots(now.date(), cfg)
     due = sum(1 for s in slots if s <= now)
     log("오늘 게시 시각(한국): " + ", ".join(s.strftime("%H:%M") for s in slots) + f" · 지난 시각 {due}개")
     states, queue = repo.states(), repo.queue()
+    alerts: list[str] = []
     if dry_run:
         me = g.me()
         usage, total = g.limit(ig_id)
         log(f"[확인만] 토큰 유효 @{me.get('username')} · 24시간 게시 {usage}/{total} · 대기열 {len(queue)}개")
-    elif not settle(g, repo, ig_id, states, now, log):
-        return {"action": "wait"}
+    else:
+        clear, alerts = settle(g, repo, ig_id, states, now, log)
+        if not clear:
+            return {"action": "wait", "alerts": alerts}
     items, _ = g.recent(ig_id)
     times = [t for t in (ts(m.get("timestamp")) for m in items) if t]
     today = sum(1 for t in times if t.astimezone(KST).date() == now.date())
-    last = max(times) if times else None
+    sent = [t for t in (ts(s.get("sent_at")) for s in states.values()) if t]     # 안 올라간 시도도 간격에 넣음
+    last = max(times + sent) if times or sent else None
     waiting = sorted((qid for qid, q in queue.items()
                       if (states.get(qid) or {}).get("status") in (None, "not_published")),
-                     key=lambda qid: (str(queue[qid].get("queued_at") or ""), qid))
+                     key=lambda qid: (str(queue[qid].get("queued_at") or ""), int(queue[qid].get("seq") or 0), qid))
     gap = timedelta(minutes=int(cfg.get("min_gap_min", 120)))
     log(f"오늘 올라간 게시물 {today}개 · 마지막 {last.astimezone(KST).strftime('%m-%d %H:%M') if last else '없음'} · "
         f"예약 대기 {len(waiting)}개")
+    out = {"alerts": alerts}
     if today >= due:
-        return {"action": "none", "reason": "지난 시각만큼 이미 올림"}
+        return out | {"action": "none", "reason": "지난 시각만큼 이미 올림"}
     if last and now - last < gap:
-        return {"action": "none", "reason": f"마지막 게시물과 {int(gap.total_seconds() // 60)}분이 안 지남"}
+        return out | {"action": "none", "reason": f"마지막 게시물과 {int(gap.total_seconds() // 60)}분이 안 지남"}
     if not waiting:
-        return {"action": "none", "reason": "예약 대기 없음"}
+        return out | {"action": "none", "reason": "예약 대기 없음"}
     qid = waiting[0]
+    q = queue[qid]
+    fp = caption_fp(str(q.get("caption") or ""))
+    dup = next((m for m in items if caption_fp(str(m.get("caption") or "")) == fp), None)
+    same = next((s for k, s in states.items() if k != qid and s.get("item_id") == q.get("item_id")
+                 and s.get("status") == "published"), None)
+    if dup or same:                                  # 이미 올라가 있는 게시물: 다시 올리지 않고 그 게시물로 기록
+        media = dup or {"id": same.get("media_id"), "permalink": same.get("permalink"),
+                        "timestamp": same.get("published_at")}
+        log(f"{qid}: 이미 인스타그램에 있는 게시물 {media.get('permalink') or media.get('id')} — 다시 올리지 않음")
+        if not dry_run:
+            st = {"qid": qid, "date": q.get("date"), "slug": q.get("slug"), "item_id": q.get("item_id")}
+            repo.save_state(qid, _published(st, media, now, g, "이미 올라가 있던 게시물 (다시 올리지 않음)"),
+                            f"duplicate {qid}")
+        return out | {"action": "duplicate", "qid": qid}
     if dry_run:
         log(f"[확인만] 지금 실제 실행이면 {qid} 를 올립니다")
-        return {"action": "would_publish", "qid": qid}
-    st = publish_one(g, repo, ig_id, qid, queue[qid], states.get(qid), repo_name, now, log, http)
+        return out | {"action": "would_publish", "qid": qid}
+    st = publish_one(g, repo, ig_id, qid, q, states.get(qid), repo_name, now, log, http, clock)
     log(f"{qid}: {st.get('status')} {st.get('permalink') or st.get('error') or ''}")
-    return {"action": "publish", "qid": qid, "status": st.get("status")}
+    if st.get("status") == "failed":
+        alerts.append(f"{qid}: 예약 게시 실패 — {st.get('error')}")
+    return out | {"action": "publish", "qid": qid, "status": st.get("status")}
 
 
 def _load_json(p: Path) -> dict:
@@ -454,6 +481,7 @@ def _load_json(p: Path) -> dict:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """종료 코드 1 = 사람이 봐야 함 (GitHub 가 실패 메일을 보냄): 토큰 문제, 예약 게시 실패, 오래 확인 못 한 게시 요청."""
     ap = argparse.ArgumentParser(description="POP&EAT 예약 게시 (GitHub Actions)")
     ap.add_argument("--dry-run", action="store_true", help="확인만 (게시·커밋 안 함)")
     a = ap.parse_args(argv)
@@ -462,7 +490,7 @@ def main(argv: list[str] | None = None) -> int:
     if not token or not ig_id or not repo_name:
         print("IG_ACCESS_TOKEN·IG_USER_ID(저장소 비밀값)·GITHUB_REPOSITORY 가 필요합니다", file=sys.stderr)
         return 2
-    repo = Repo(Path.cwd())
+    repo = Repo(Path.cwd(), branch=os.environ.get("GITHUB_REF_NAME") or "main")
     if not a.dry_run:
         repo.git("config", "user.name", "popeat-scheduler")
         repo.git("config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com")
@@ -470,10 +498,16 @@ def main(argv: list[str] | None = None) -> int:
     try:
         out = run(datetime.now(KST), Graph(token), repo, ig_id, repo_name, dry_run=a.dry_run, log=log)
     except IGError as e:
+        if str(e.code) in AUTH_CODES or e.status == 401:
+            log(f"[확인 필요] 인스타그램 토큰 문제로 예약 게시가 멈췄습니다 — PC 에서 cardnews token status 로 확인하고 "
+                f"검수 화면을 열어 비밀값을 다시 넣으세요: {e}")
+            return 1
         log(f"인스타그램 API 오류로 이번 실행은 멈춤 — 다음 실행에서 다시: {e}")
         return 0
+    for m in out.get("alerts") or []:
+        log(f"[확인 필요] {m}")
     log(json.dumps(out, ensure_ascii=False))
-    return 1 if out.get("status") == "failed" else 0
+    return 1 if out.get("alerts") else 0
 
 
 if __name__ == "__main__":
