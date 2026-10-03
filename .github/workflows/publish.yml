@@ -1,0 +1,27 @@
+# cardnews schedule setup 이 만든 파일 — 직접 고치지 말고 cardnews 의 publish.schedule_windows 를 바꾼 뒤 다시 setup
+name: publish
+on:
+  schedule:
+    - cron: "7,22,37,52 2,3,4,5,6,7,8,9,10,11,12,13,14 * * *"   # 한국 시간 11~23시, 15분마다 (UTC 표기)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "확인만 (게시 안 함)"
+        type: boolean
+        default: true
+permissions:
+  contents: write
+concurrency:
+  group: popeat-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: 예약 게시
+        run: python3 schedule/run.py ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
