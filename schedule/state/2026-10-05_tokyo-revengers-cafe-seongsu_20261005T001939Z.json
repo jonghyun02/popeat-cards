@@ -4,8 +4,13 @@
   "slug": "tokyo-revengers-cafe-seongsu",
   "item_id": "dd4ab8c49e6218fc",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18120167707865735",
   "caption_fp": "aad987ecb198c0bc",
-  "sent_at": "2026-10-05T08:53:43+00:00"
+  "sent_at": "2026-10-05T08:53:43+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18096311234403282",
+  "permalink": "https://www.instagram.com/p/DeG0uNCm8OZ/",
+  "published_at": "2026-10-05T08:53:45+00:00",
+  "error": null
 }
