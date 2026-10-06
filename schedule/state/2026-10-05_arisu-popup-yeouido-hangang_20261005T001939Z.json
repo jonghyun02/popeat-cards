@@ -4,8 +4,13 @@
   "slug": "arisu-popup-yeouido-hangang",
   "item_id": "8b6cac3dd4f5ab93",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18120502072865735",
   "caption_fp": "276fa6e12bd52e13",
-  "sent_at": "2026-10-06T08:54:27+00:00"
+  "sent_at": "2026-10-06T08:54:27+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18141949033719828",
+  "permalink": "https://www.instagram.com/p/DeJZmkXm7Xs/",
+  "published_at": "2026-10-06T08:54:28+00:00",
+  "error": null
 }
