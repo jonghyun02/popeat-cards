@@ -4,8 +4,13 @@
   "slug": "nonamukdang-popup-yongsan-amorepacific",
   "item_id": "9df408814bb1977b",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18121518688865735",
   "caption_fp": "1e0390fc4ed82bce",
-  "sent_at": "2026-10-09T08:53:54+00:00"
+  "sent_at": "2026-10-09T08:53:54+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18115993877114519",
+  "permalink": "https://www.instagram.com/p/DeRICeBFVMj/",
+  "published_at": "2026-10-09T08:53:56+00:00",
+  "error": null
 }
