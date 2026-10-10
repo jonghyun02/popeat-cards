@@ -4,8 +4,13 @@
   "slug": "paris-baguette-cheese-new-menu",
   "item_id": "090d7b527e9ef36e",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18121788304865735",
   "caption_fp": "b9568dad7e40ffb9",
-  "sent_at": "2026-10-10T08:25:19+00:00"
+  "sent_at": "2026-10-10T08:25:19+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18067142906791291",
+  "permalink": "https://www.instagram.com/p/DeTpctfFmkG/",
+  "published_at": "2026-10-10T08:25:20+00:00",
+  "error": null
 }
