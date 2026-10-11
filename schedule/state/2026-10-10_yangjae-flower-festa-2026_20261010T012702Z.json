@@ -4,8 +4,13 @@
   "slug": "yangjae-flower-festa-2026",
   "item_id": "5b9c87c0f04ee346",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18122059648865735",
   "caption_fp": "92f32f8c3528af58",
-  "sent_at": "2026-10-11T08:42:17+00:00"
+  "sent_at": "2026-10-11T08:42:17+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "17971718913175461",
+  "permalink": "https://www.instagram.com/p/DeWQLxkG9-A/",
+  "published_at": "2026-10-11T08:42:18+00:00",
+  "error": null
 }
