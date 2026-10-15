@@ -4,8 +4,13 @@
   "slug": "starbucks-injeolmi-chalddeok-pie",
   "item_id": "a48efc36b09e7953",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18123093313865735",
   "caption_fp": "eb445ded85997e24",
-  "sent_at": "2026-10-15T12:43:43+00:00"
+  "sent_at": "2026-10-15T12:43:43+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18383963329231903",
+  "permalink": "https://www.instagram.com/p/Deg_G-AEWOU/",
+  "published_at": "2026-10-15T12:43:45+00:00",
+  "error": null
 }
