@@ -4,8 +4,13 @@
   "slug": "nexzoo-sweet-picnic-popup-sinchon",
   "item_id": "e5237ba019cab71d",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18123303940865735",
   "caption_fp": "706c23e907d6ea64",
-  "sent_at": "2026-10-16T07:04:02+00:00"
+  "sent_at": "2026-10-16T07:04:02+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18194354257402487",
+  "permalink": "https://www.instagram.com/p/Dei86q5FuAd/",
+  "published_at": "2026-10-16T07:04:04+00:00",
+  "error": null
 }
