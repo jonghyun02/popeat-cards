@@ -4,8 +4,13 @@
   "slug": "twice-the-thrill-popup-seongsu",
   "item_id": "e9847cbb6bbd950b",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18123353071865735",
   "caption_fp": "ddf7e44b498c73c2",
-  "sent_at": "2026-10-16T12:18:01+00:00"
+  "sent_at": "2026-10-16T12:18:01+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "17964174441210576",
+  "permalink": "https://www.instagram.com/p/Dejg9n-ERWM/",
+  "published_at": "2026-10-16T12:18:03+00:00",
+  "error": null
 }
