@@ -4,8 +4,13 @@
   "slug": "52toys-popup-yongsan-ipark-mall",
   "item_id": "f7da393d1372a448",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18123629755865735",
   "caption_fp": "a42ff4d17ce3c26f",
-  "sent_at": "2026-10-17T14:17:37+00:00"
+  "sent_at": "2026-10-17T14:17:37+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18132266620682714",
+  "permalink": "https://www.instagram.com/p/DemTVEOm5It/",
+  "published_at": "2026-10-17T14:17:39+00:00",
+  "error": null
 }
