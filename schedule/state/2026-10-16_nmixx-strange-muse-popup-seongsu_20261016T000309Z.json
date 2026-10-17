@@ -4,8 +4,13 @@
   "slug": "nmixx-strange-muse-popup-seongsu",
   "item_id": "1bd37317a7083fda",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18123551056865735",
   "caption_fp": "a4cc47e4ebc222f6",
-  "sent_at": "2026-10-17T06:53:02+00:00"
+  "sent_at": "2026-10-17T06:53:02+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18119010626098284",
+  "permalink": "https://www.instagram.com/p/Delgc1nmxz0/",
+  "published_at": "2026-10-17T06:53:03+00:00",
+  "error": null
 }
