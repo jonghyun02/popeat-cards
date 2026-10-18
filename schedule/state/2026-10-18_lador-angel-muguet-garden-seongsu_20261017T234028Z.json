@@ -4,8 +4,13 @@
   "slug": "lador-angel-muguet-garden-seongsu",
   "item_id": "9a26e6c0a445f93d",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18123882301865735",
   "caption_fp": "6b0c1818fa34102a",
-  "sent_at": "2026-10-18T12:07:42+00:00"
+  "sent_at": "2026-10-18T12:07:42+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18067009145716748",
+  "permalink": "https://www.instagram.com/p/DeopQawmlCw/",
+  "published_at": "2026-10-18T12:07:44+00:00",
+  "error": null
 }
