@@ -4,8 +4,13 @@
   "slug": "moomin-popup-yongsan-ipark-mall",
   "item_id": "176112b65220e1df",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18124347910865735",
   "caption_fp": "be0e0bcce421d47e",
-  "sent_at": "2026-10-20T07:26:54+00:00"
+  "sent_at": "2026-10-20T07:26:54+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18131991256686305",
+  "permalink": "https://www.instagram.com/p/DetStecG4OT/",
+  "published_at": "2026-10-20T07:26:56+00:00",
+  "error": null
 }
