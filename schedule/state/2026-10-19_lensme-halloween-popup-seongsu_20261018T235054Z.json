@@ -4,8 +4,13 @@
   "slug": "lensme-halloween-popup-seongsu",
   "item_id": "4d46ad2ffc889de5",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18124404019865735",
   "caption_fp": "b47f4d5b6a961b90",
-  "sent_at": "2026-10-20T12:57:13+00:00"
+  "sent_at": "2026-10-20T12:57:13+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18138033301727461",
+  "permalink": "https://www.instagram.com/p/Det4g8AFJg3/",
+  "published_at": "2026-10-20T12:57:15+00:00",
+  "error": null
 }
