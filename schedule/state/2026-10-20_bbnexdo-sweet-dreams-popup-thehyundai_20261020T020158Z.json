@@ -4,8 +4,13 @@
   "slug": "bbnexdo-sweet-dreams-popup-thehyundai",
   "item_id": "326919917202e2e1",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18124602895865735",
   "caption_fp": "5a4553d9856a2c12",
-  "sent_at": "2026-10-21T07:29:47+00:00"
+  "sent_at": "2026-10-21T07:29:47+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18139010434622539",
+  "permalink": "https://www.instagram.com/p/Dev31owFhX1/",
+  "published_at": "2026-10-21T07:29:49+00:00",
+  "error": null
 }
