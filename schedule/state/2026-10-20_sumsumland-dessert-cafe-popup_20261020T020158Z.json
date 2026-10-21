@@ -4,8 +4,13 @@
   "slug": "sumsumland-dessert-cafe-popup",
   "item_id": "b558c39a7e4d63b9",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18124659394865735",
   "caption_fp": "cd16ebe5dfdd01e6",
-  "sent_at": "2026-10-21T13:10:30+00:00"
+  "sent_at": "2026-10-21T13:10:30+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "17896547070416729",
+  "permalink": "https://www.instagram.com/p/Dewe8UQFerz/",
+  "published_at": "2026-10-21T13:10:31+00:00",
+  "error": null
 }
