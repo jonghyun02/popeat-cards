@@ -4,8 +4,13 @@
   "slug": "jujutsu-kaisen-exhibition-duex-hongdae",
   "item_id": "279f138ddd138e26",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18124902547865735",
   "caption_fp": "016720ef45bbf7e0",
-  "sent_at": "2026-10-22T13:11:36+00:00"
+  "sent_at": "2026-10-22T13:11:36+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18315384271304599",
+  "permalink": "https://www.instagram.com/p/DezDv41G_Yo/",
+  "published_at": "2026-10-22T13:11:38+00:00",
+  "error": null
 }
