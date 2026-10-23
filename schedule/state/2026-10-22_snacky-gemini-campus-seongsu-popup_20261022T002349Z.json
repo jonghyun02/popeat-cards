@@ -4,8 +4,13 @@
   "slug": "snacky-gemini-campus-seongsu-popup",
   "item_id": "11dbd2dd12f64d4b",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18125081281865735",
   "caption_fp": "18b6a7b2b9181d81",
-  "sent_at": "2026-10-23T07:23:20+00:00"
+  "sent_at": "2026-10-23T07:23:20+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18099796070553225",
+  "permalink": "https://www.instagram.com/p/De1AsCtHM4R/",
+  "published_at": "2026-10-23T07:23:22+00:00",
+  "error": null
 }
