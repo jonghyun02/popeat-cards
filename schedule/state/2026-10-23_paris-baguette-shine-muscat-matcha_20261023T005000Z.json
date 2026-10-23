@@ -4,8 +4,13 @@
   "slug": "paris-baguette-shine-muscat-matcha",
   "item_id": "5ad489dcfdf70e85",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18125131765865735",
   "caption_fp": "c5d85ed984fc9710",
-  "sent_at": "2026-10-23T12:43:08+00:00"
+  "sent_at": "2026-10-23T12:43:08+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "17902837449374944",
+  "permalink": "https://www.instagram.com/p/De1lZpoFrB8/",
+  "published_at": "2026-10-23T12:43:10+00:00",
+  "error": null
 }
