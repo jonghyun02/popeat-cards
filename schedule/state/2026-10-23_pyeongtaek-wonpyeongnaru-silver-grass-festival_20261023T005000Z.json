@@ -4,8 +4,13 @@
   "slug": "pyeongtaek-wonpyeongnaru-silver-grass-festival",
   "item_id": "c63dc68353094b01",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18125310088865735",
   "caption_fp": "81c8213a8e5948d6",
-  "sent_at": "2026-10-24T07:12:01+00:00"
+  "sent_at": "2026-10-24T07:12:01+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "17968954548204333",
+  "permalink": "https://www.instagram.com/p/De3kTaHmz6N/",
+  "published_at": "2026-10-24T07:12:03+00:00",
+  "error": null
 }
