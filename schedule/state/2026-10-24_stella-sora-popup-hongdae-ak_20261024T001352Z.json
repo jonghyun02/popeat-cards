@@ -4,8 +4,13 @@
   "slug": "stella-sora-popup-hongdae-ak",
   "item_id": "91f31dce402548db",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18125580682865735",
   "caption_fp": "71802f1602f1a4bf",
-  "sent_at": "2026-10-25T07:32:57+00:00"
+  "sent_at": "2026-10-25T07:32:57+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18111229964223958",
+  "permalink": "https://www.instagram.com/p/De6LYWYlZQP/",
+  "published_at": "2026-10-25T07:32:59+00:00",
+  "error": null
 }
