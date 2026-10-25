@@ -4,8 +4,13 @@
   "slug": "mixmill-popup-yongsan-ipark",
   "item_id": "48c14186088da510",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18125640823865735",
   "caption_fp": "7f28884b94ca8fde",
-  "sent_at": "2026-10-25T12:45:24+00:00"
+  "sent_at": "2026-10-25T12:45:24+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18068738423685474",
+  "permalink": "https://www.instagram.com/p/De6vIqyEQhj/",
+  "published_at": "2026-10-25T12:45:26+00:00",
+  "error": null
 }
