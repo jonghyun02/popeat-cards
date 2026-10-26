@@ -4,8 +4,13 @@
   "slug": "astomic-popup-ak-plaza-hongdae",
   "item_id": "06eb0d73070995df",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18125885332865735",
   "caption_fp": "ee464e35d9a73fae",
-  "sent_at": "2026-10-26T07:44:05+00:00"
+  "sent_at": "2026-10-26T07:44:05+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "18117570731118028",
+  "permalink": "https://www.instagram.com/p/De8xcvpFgv_/",
+  "published_at": "2026-10-26T07:44:07+00:00",
+  "error": null
 }
