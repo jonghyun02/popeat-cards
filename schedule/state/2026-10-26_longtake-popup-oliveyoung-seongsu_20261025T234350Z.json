@@ -4,8 +4,13 @@
   "slug": "longtake-popup-oliveyoung-seongsu",
   "item_id": "879149da319b7759",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18126138043865735",
   "caption_fp": "8a2304fe22659e2b",
-  "sent_at": "2026-10-27T07:42:51+00:00"
+  "sent_at": "2026-10-27T07:42:51+00:00",
+  "note": "게시 응답은 오류였지만 올라간 것을 확인",
+  "media_id": "17932609308411755",
+  "permalink": "https://www.instagram.com/p/De_WGfKFWia/",
+  "published_at": "2026-10-27T07:42:53+00:00",
+  "error": null
 }
