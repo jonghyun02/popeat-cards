@@ -4,8 +4,13 @@
   "slug": "paris-baguette-new-menu-chapssaltteok",
   "item_id": "984123060bfdc23d",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18127455046865735",
   "caption_fp": "ff9718b17a287223",
-  "sent_at": "2026-11-01T09:06:22+00:00"
+  "sent_at": "2026-11-01T09:06:22+00:00",
+  "media_id": "18113279510160213",
+  "permalink": "https://www.instagram.com/p/DfMXv-TGxLC/",
+  "published_at": "2026-11-01T09:06:28+00:00",
+  "error": null,
+  "note": ""
 }
