@@ -4,8 +4,13 @@
   "slug": "dunkin-choco-churro-munchkin",
   "item_id": "9c2350f3b4ea7e2d",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18127696999865735",
   "caption_fp": "c3122e3a5c7b5520",
-  "sent_at": "2026-11-02T09:19:29+00:00"
+  "sent_at": "2026-11-02T09:19:29+00:00",
+  "media_id": "18197332972402313",
+  "permalink": "https://www.instagram.com/p/DfO-C7dG8J-/",
+  "published_at": "2026-11-02T09:19:35+00:00",
+  "error": null,
+  "note": ""
 }
