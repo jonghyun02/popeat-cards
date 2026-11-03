@@ -4,8 +4,13 @@
   "slug": "baskin-robbins-anpanman-ice-cream",
   "item_id": "cd5e5e6241da696b",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18127918948865735",
   "caption_fp": "b18bc5a5b538c8bd",
-  "sent_at": "2026-11-03T09:27:23+00:00"
+  "sent_at": "2026-11-03T09:27:23+00:00",
+  "media_id": "18106132715037246",
+  "permalink": "https://www.instagram.com/p/DfRjoJPFumW/",
+  "published_at": "2026-11-03T09:27:28+00:00",
+  "error": null,
+  "note": ""
 }
