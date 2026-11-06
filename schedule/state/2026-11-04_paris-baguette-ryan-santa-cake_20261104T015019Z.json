@@ -4,8 +4,13 @@
   "slug": "paris-baguette-ryan-santa-cake",
   "item_id": "688cdb749ccc05cf",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18128560084865735",
   "caption_fp": "1ee1c60431d5280a",
-  "sent_at": "2026-11-06T09:16:44+00:00"
+  "sent_at": "2026-11-06T09:16:44+00:00",
+  "media_id": "18219223489355356",
+  "permalink": "https://www.instagram.com/p/DfZQ6Qrm0de/",
+  "published_at": "2026-11-06T09:16:50+00:00",
+  "error": null,
+  "note": ""
 }
