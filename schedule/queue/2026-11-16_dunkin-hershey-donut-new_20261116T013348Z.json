@@ -1,0 +1,20 @@
+{
+  "qid": "2026-11-16_dunkin-hershey-donut-new_20261116T013348Z",
+  "account": "weekend",
+  "date": "2026-11-16",
+  "slug": "dunkin-hershey-donut-new",
+  "item_id": "585a1f7e27ba00ed",
+  "caption": "초코 덕후 소집, 던킨에 허쉬 도넛 떴어요 🍫\n던킨에 허쉬 초코 도넛 신메뉴 2종이 새로 나왔어요\n허쉬 아몬드 초코바는 초코코팅에 아몬드를 뿌린 초코 바이츠 도넛이에요\n✔ 허쉬 초코앤쿠키 도넛\n\n#던킨 #던킨신메뉴 #허쉬 #허쉬도넛 #초코도넛 #도넛신상 #신메뉴 #디저트추천 #간식추천",
+  "images": [
+    "2026-11-16/dunkin-hershey-donut-new/01.jpg",
+    "2026-11-16/dunkin-hershey-donut-new/02.jpg",
+    "2026-11-16/dunkin-hershey-donut-new/03.jpg"
+  ],
+  "sha256": [
+    "d3b15010c521af8cbfb0c6783787fb82e48bb4c799683b8e83e44431f14329ec",
+    "70a58d73e6807e0be3e06712b5e4a4b15bd4b419ac112640a00edf09bd616566",
+    "3cfb0873ff59f3240a3886f094b380a5d3d6fd0ebfcd1811e5221070470887e8"
+  ],
+  "queued_at": "2026-11-16T01:33:48+00:00",
+  "seq": 1
+}
