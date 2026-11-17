@@ -4,8 +4,13 @@
   "slug": "paris-baguette-strawberry-compote-new",
   "item_id": "a5a9bdd2bf1f60f7",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18131337697865735",
   "caption_fp": "e56a0aa5ebced33e",
-  "sent_at": "2026-11-17T10:33:55+00:00"
+  "sent_at": "2026-11-17T10:33:55+00:00",
+  "media_id": "18117100136135750",
+  "permalink": "https://www.instagram.com/p/Df1uXtEEUVi/",
+  "published_at": "2026-11-17T10:34:01+00:00",
+  "error": null,
+  "note": ""
 }
