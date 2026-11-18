@@ -4,8 +4,13 @@
   "slug": "dunkin-hershey-donut-new",
   "item_id": "585a1f7e27ba00ed",
   "attempt": 1,
-  "status": "sending",
+  "status": "published",
   "creation_id": "18131527813865735",
   "caption_fp": "06ca57de2a59250e",
-  "sent_at": "2026-11-18T10:02:34+00:00"
+  "sent_at": "2026-11-18T10:02:34+00:00",
+  "media_id": "18115541653875488",
+  "permalink": "https://www.instagram.com/p/Df4PlFhFtDk/",
+  "published_at": "2026-11-18T10:02:39+00:00",
+  "error": null,
+  "note": ""
 }
