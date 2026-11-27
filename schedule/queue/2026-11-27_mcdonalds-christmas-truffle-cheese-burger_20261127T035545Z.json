@@ -1,0 +1,24 @@
+{
+  "qid": "2026-11-27_mcdonalds-christmas-truffle-cheese-burger_20261127T035545Z",
+  "account": "weekend",
+  "date": "2026-11-27",
+  "slug": "mcdonalds-christmas-truffle-cheese-burger",
+  "item_id": "00bab780ef68be9d",
+  "caption": "맥도날드에 크리스마스 트러플 버거 NEW 🎄\n네 가지 치즈로 만든 알리고에 트러플 랜치 소스를 더한 크리스마스 한정 버거예요. 매콤한 핫 트러플 치즈 버거도 함께 나왔어요.\n✔ 트러플 치즈 머핀\n✔ 트러플 맥쉐이커\n✔ 트러플 후라이 Small\n🗓️ 11월 26일 출시\n\n#맥도날드 #맥도날드신메뉴 #트러플치즈버거 #크리스마스한정 #맥모닝 #맥쉐이커 #버거신메뉴 #신메뉴",
+  "images": [
+    "2026-11-27/mcdonalds-christmas-truffle-cheese-burger/01.jpg",
+    "2026-11-27/mcdonalds-christmas-truffle-cheese-burger/02.jpg",
+    "2026-11-27/mcdonalds-christmas-truffle-cheese-burger/03.jpg",
+    "2026-11-27/mcdonalds-christmas-truffle-cheese-burger/04.jpg",
+    "2026-11-27/mcdonalds-christmas-truffle-cheese-burger/05.jpg"
+  ],
+  "sha256": [
+    "71952a665541838f7d4a7e513770af63b0c40e75aaa366327683be4da92f80b2",
+    "0ecf6325b46d0463c4502c7640a61c4dba178caa1e7c1d4603877a7dd82d4b6c",
+    "8bd29bd3ea3df2db7eef8e6a4277251e1516a3b1ecc08b557fbdb025b929d202",
+    "60fcbfee10adca963d28fc4f47a62026ddf414e745850cae3ca302cdfc06dedc",
+    "aedce8db97a33ad8588a9496a07751d1b70d16dd2347720f1974e9cb6e3782df"
+  ],
+  "queued_at": "2026-11-27T03:55:45+00:00",
+  "seq": 1
+}
